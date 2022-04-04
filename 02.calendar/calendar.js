@@ -12,49 +12,41 @@ const argv = require('minimist')(process.argv.slice(2), {
 
 //コマンドラインで受け取った月と年を元にDateインスタンスを生成
 //月の初日の情報を取得
-let date_first = new Date(argv.y, argv.m - 1, 1);
+let dateFirst = new Date(argv.y, argv.m - 1, 1);
 //月の最終日の情報を取得
-let date_last = new Date(argv.y, argv.m, 0);
+let dateLast = new Date(argv.y, argv.m, 0);
 
-let date_hash = {};
+dayFirstTemp = dateFirst.getDate();
+dateFirstGetDayTemp = dateFirst.getDay();
 
-day_first_temp = date_first.getDate();
-date_first_getDay_temp = date_first.getDay();
-
-// 日付をキー、曜日の番号を値としたハッシュを作成
-while (day_first_temp <= date_last.getDate()){
-  date_hash[day_first_temp] = date_first_getDay_temp;
-  day_first_temp++;
-  date_first_getDay_temp++;
-  if(date_first_getDay_temp > 6){
-    date_first_getDay_temp = 0;
-  }
+let dates = [];
+for(const d = dateFirst ; d <= dateLast ; d.setDate(d.getDate()+1)){
+  dates.push(new Date(d));
 }
 
-//console.log('ハッシュの中身:', date_hash);
+//初日が日曜日以外の場合、そのまま出力すると曜日と日付が合わないので
+//曜日番号に応じて前に付与する空白の数を変えて出力する位置をずらす
+pre_branks = ' ';
+if(String(dates[0].getDate()).length === 1){
+  pre_branks = pre_branks.padStart((dates[0].getDay() + 1)  * 3 - 2,'   ');
+}
 
 //カレンダーを出力
-console.log('      ' + (date_first.getMonth() + 1) + '月 ' + date_first.getFullYear());
-console.log('日' + ' 月 ' + '火' + ' 水 ' + '木' + ' 金 ' + '土');
-
-for (let key in date_hash) {
-  if(key.length === 1){
-    //日付が一桁の場合は、整合をとるために前にも空白を付与する
-    pre_branks = ' ';
-    if(key === '1'){
-      //初日が日曜日以外の場合、そのまま出力すると曜日と日付が合わないので
-      //曜日番号に応じて前に付与する空白の数を変えて出力する位置をずらす
-      for(let i = 0; i < date_hash[key]; i++){
-        //曜日番号が1増えるごとに、空白を3つ増やす
-        pre_branks += '   ';
-      }
-    }
-    process.stdout.write(pre_branks + key + ' ');
+console.log('      ' + dateFirst.getMonth() + '月 ' + dateFirst.getFullYear());
+console.log('日 月 火 水 木 金 土');
+for (let date of dates) {
+  if(date.getDate() === 1){
+    process.stdout.write(pre_branks + date.getDate() + ' ');
   }else{
-    process.stdout.write(key + ' ');
+    //日付が一桁の場合は、整合をとるために前にも空白を付与する
+    if(String(date.getDate()).length === 1){
+      process.stdout.write(' ' + date.getDate() + ' ');
+    }else{
+      process.stdout.write(date.getDate() + ' ');
+    }
   }
   //土曜日まで出力したら改行
-  if(date_hash[key] === 6){
+  if(date.getDay() === 6){
     process.stdout.write('\n');
   }
 }
