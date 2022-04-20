@@ -26,24 +26,40 @@ for(const d = dateFirst ; d <= dateLast ; d.setDate(d.getDate()+1)){
 
 //初日が日曜日以外の場合、そのまま出力すると曜日と日付が合わないので
 //曜日番号に応じて前に付与する空白の数を変えて出力する位置をずらす
-pre_branks = ' ';
-if(String(dates[0].getDate()).length === 1){
-  pre_branks = pre_branks.padStart((dates[0].getDay() + 1)  * 3 - 2,'   ');
+preBranks = ' ';
+switch(dates[0].getDay()){
+  case 1:
+    preBranks += '   ';
+    break;
+  case 2:
+    preBranks += '      ';
+    break;
+  case 3:
+    preBranks += '         ';
+    break;
+  case 4:
+    preBranks += '            ';
+    break;
+  case 5:
+    preBranks += '               ';
+    break;
+  case 6:
+    preBranks += '                  ';
+    break;
 }
 
 //カレンダーを出力
 console.log('      ' + dateFirst.getMonth() + '月 ' + dateFirst.getFullYear());
 console.log('日 月 火 水 木 金 土');
+process.stdout.write(preBranks);
+let dateInput = 0;
 for (let date of dates) {
-  if(date.getDate() === 1){
-    process.stdout.write(pre_branks + date.getDate() + ' ');
+  dateInput = String(date.getDate());
+  if(dateInput !== '1' ){
+    dateInput = dateInput.padStart(2, ' ');
+    process.stdout.write(dateInput + ' ');
   }else{
-    //日付が一桁の場合は、整合をとるために前にも空白を付与する
-    if(String(date.getDate()).length === 1){
-      process.stdout.write(' ' + date.getDate() + ' ');
-    }else{
-      process.stdout.write(date.getDate() + ' ');
-    }
+    process.stdout.write(dateInput + ' ');
   }
   //土曜日まで出力したら改行
   if(date.getDay() === 6){
