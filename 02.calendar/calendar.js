@@ -24,43 +24,19 @@ for(const d = dateFirst ; d <= dateLast ; d.setDate(d.getDate()+1)){
   dates.push(new Date(d));
 }
 
-//初日が日曜日以外の場合、そのまま出力すると曜日と日付が合わないので
-//曜日番号に応じて前に付与する空白の数を変えて出力する位置をずらす
-preBranks = ' ';
-switch(dates[0].getDay()){
-  case 1:
-    preBranks += '   ';
-    break;
-  case 2:
-    preBranks += '      ';
-    break;
-  case 3:
-    preBranks += '         ';
-    break;
-  case 4:
-    preBranks += '            ';
-    break;
-  case 5:
-    preBranks += '               ';
-    break;
-  case 6:
-    preBranks += '                  ';
-    break;
-}
-
 //カレンダーを出力
-console.log('      ' + dateFirst.getMonth() + '月 ' + dateFirst.getFullYear());
-console.log('日 月 火 水 木 金 土');
-process.stdout.write(preBranks);
+process.stdout.write('      ' + dateFirst.getMonth() + '月 ' + dateFirst.getFullYear() + '\n');
+process.stdout.write('日 月 火 水 木 金 土 \n');
+//初日が日曜日以外の場合、そのまま出力すると曜日と日付が合わないので
+//曜日番号が1増えるごとに前に空白を3つ追加して出力する位置をずらす
+for(let i = 0; i < dates[0].getDay(); i++){
+  process.stdout.write('   ');
+}
 let dateInput = 0;
 for (let date of dates) {
   dateInput = String(date.getDate());
-  if(dateInput !== '1' ){
-    dateInput = dateInput.padStart(2, ' ');
-    process.stdout.write(dateInput + ' ');
-  }else{
-    process.stdout.write(dateInput + ' ');
-  }
+  dateInput = dateInput.padStart(2, ' ');
+  process.stdout.write(dateInput + ' ');
   //土曜日まで出力したら改行
   if(date.getDay() === 6){
     process.stdout.write('\n');
